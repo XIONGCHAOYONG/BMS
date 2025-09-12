@@ -1,0 +1,128 @@
+# =============================
+# 操作系统生成的文件
+# =============================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+[Tt]humbs.db:encryptable
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# =============================
+# IDE 和编辑器文件
+# =============================
+# IntelliJ IDEA (包括 WebStorm, PyCharm, 等)
+.idea/
+*.iws
+*.iml
+*.ipr
+*.orig
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Eclipse
+.settings/
+.classpath
+.project
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+
+# =============================
+# Java & Spring Boot 后端
+# =============================
+# 编译后的输出
+target/
+**/target/
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+
+# 日志文件
+*.log
+logs/
+**/logs/
+
+# 依赖包 (除非使用嵌入式容器，否则通常不提交)
+**/lib/
+
+# 可执行文件
+*.exe
+
+# =============================
+# Node.js & Vue 3 前端
+# =============================
+# 通常在项目根目录或 `frontend/` 目录下
+# 依赖目录 (绝对不要提交)
+node_modules/
+*/node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# 构建输出目录
+dist/
+*/dist/
+**/dist/
+build/
+*.tgz
+
+# 本地开发环境变量文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# 缓存文件
+.nuxt/
+.nxt/
+.cache/
+.vuepress/dist/
+
+# ESLint, Prettier 等检查器的输出
+.eslintcache
+.stylelintcache
+
+# 可选: 如果你不使用 Cypress 进行 E2E 测试，可以取消注释
+# cyppress/
+# coverage/
+
+# =============================
+# 通用规则
+# =============================
+# Maven 包装器 (如果你用了，可以提交 wrapper/maven-wrapper.jar)
+!.mvn/wrapper/maven-wrapper.jar
+
+# 其他临时文件
+*.tmp
+*.temp
+
+# 本地配置文件 (根据项目需要决定是否提交)
+# application-local.properties
+# application-dev.properties
