@@ -1,0 +1,64 @@
+
+
+/* base.css */
+html {
+  scroll-behavior: smooth;
+  /* 关键属性 */
+}
+
+/* 重置所有元素的内外边距 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-weight: normal;
+}
+body{
+  /* background-color: #f7ecf0; */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-weight: normal;
+}
+
+
+/* 重置列表样式 */
+ul,
+ol {
+  list-style: none;
+}
+
+/* 重置链接样式 */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 设置滚动条整体宽度 */
+::-webkit-scrollbar {
+  width: 5px;
+  /* 垂直滚动条宽度 */
+  height: 10px;
+  /* 水平滚动条高度 */
+}
+
+/* 滚动条轨道（背景） */
+::-webkit-scrollbar-track {
+  background: #f7ecf0;
+  border-radius: 4px;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  width: 5px;
+  height: 5px;
+  border-radius: 40px;
+  transition: all 0.2s;
+
+  background-image: linear-gradient(to top, #88d3ce 0%, #6e45e2 100%);
+}
+
+/* 鼠标悬停时的滑块 */
+::-webkit-scrollbar-thumb:hover {
+  background: peru;
+}

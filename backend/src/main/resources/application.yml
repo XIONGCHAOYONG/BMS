@@ -1,0 +1,55 @@
+spring:
+  profiles:
+    include: secret
+  datasource:
+    url: jdbc:mysql://localhost:3306/BMS
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  mvc:
+    throw-exception-if-no-handler-found: false
+    static-path-pattern: /**
+  web:
+    resources:
+      add-mappings: true
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.x.pojo
+  configuration:
+    map-underscore-to-camel-case: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+
+
+#api文档
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+    enable-swagger-model: true
+    enable-document-manage: true
+  cors: true
+  production: false
+
+#日志配置
+logging:
+  level:
+    com:
+      x:
+        mapper: debug
+        service: info
+        controller: info
+
+
+
+

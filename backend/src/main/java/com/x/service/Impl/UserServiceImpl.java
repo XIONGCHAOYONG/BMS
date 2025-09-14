@@ -1,0 +1,62 @@
+package com.x.service.Impl;
+
+import cn.hutool.core.bean.BeanUtil;
+import com.x.exception.BusinessException;
+import com.x.mapper.UserMapper;
+import com.x.pojo.dto.RegisterDTO;
+import com.x.pojo.dto.UserLoginDTO;
+import com.x.pojo.entity.User;
+import com.x.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.security.auth.login.LoginException;
+
+@Service
+public class UserServiceImpl implements UserService {
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Override
+    public User login(UserLoginDTO userLoginDTO) {
+        User user;
+        // TODO 先判断是手机号还是账号,前端加一个匹配规则，放行两种格式
+        if(userLoginDTO.getIdentifier().matches("^1[3-9]\\d{9}$"))
+            user=userMapper.getUserByPhone(userLoginDTO.getIdentifier());
+        else if(userLoginDTO.getIdentifier().length()==6)
+            user=userMapper.getUserByAccount(userLoginDTO.getIdentifier());
+        else
+            throw new BusinessException("请输入正确的手机号或账号!");
+        //判断用户是否存在
+        if(user==null)
+            throw new BusinessException("用户不存在!");
+        else  if(!bCryptPasswordEncoder.matches(userLoginDTO.getPassword(), user.getPassword()))
+            throw new BusinessException("密码错误!");
+        else if(user.getStatus()==1)
+            throw new BusinessException("用户被禁用,请联系管理员qq1846326845!");
+
+        return user;
+    }
+
+    @Override
+    @Transactional
+    public void register(RegisterDTO registerDTO) {
+        //先根据phone判断是否已注册
+        User user=userMapper.getUserByPhone(registerDTO.getPhone());
+        if(user!=null)
+            throw new BusinessException("该手机号已注册!");
+        //构造新用户对象插入数据库
+        User newUser= BeanUtil.copyProperties(registerDTO,User.class);
+        newUser.setPassword(bCryptPasswordEncoder.encode(registerDTO.getPassword()));
+        //TODO 借阅时前端提示补充个人信息
+        userMapper.insert(newUser);
+        //插入后再根据用户id生成账号，防止并发问题
+        Long id=newUser.getUserId();
+        String account=String.format("%06d", id);
+        userMapper.updateAccountById(id,account);
+    }
+}
