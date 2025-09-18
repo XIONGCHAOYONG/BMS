@@ -69,16 +69,19 @@ const form = reactive({
   phone: ""
 });
 
-//登录过前往/
+//登录过前往"/"
 if (userStore.getUser()) {
   router.push("/");
   ElNotification({
     title: "你想干啥呢?",
     message: "已经登录了哦",
     type: "warning",
+    offset: 50,
   });
 }
 
+
+//提交注册或者登录表单
 const handleSubmit = async () => {
   if (!validateForm()) return;
 
@@ -89,7 +92,6 @@ const handleSubmit = async () => {
         identifier: form.identifier,
         password: form.password,
       });
-      console.log(res.data);
       const userVO = res.data.data as UserLoginVO;
       if (res.data.code === 1) {
         ElNotification({
@@ -97,8 +99,9 @@ const handleSubmit = async () => {
           message: `欢迎回来,${userVO.user.username}`,
           type: "success",
           duration: 3000,
+          offset: 50,
         });
-        //存储用户信息
+        //存储用户信息到本地/缓存
         userStore.setUser(userVO.user);
         userStore.setToken(userVO.token);
         //登录成功后回到首页
@@ -109,6 +112,7 @@ const handleSubmit = async () => {
           message: res.data.msg,
           type: "error",
           duration: 3000,
+          offset: 50,
         });
       }
     } catch {
@@ -133,14 +137,17 @@ const handleSubmit = async () => {
           title: "注册成功",
           message: "请登录",
           type: "success",
+          offset: 50,
           duration: 3000,
         });
+        //切换登录
         toggleMode();
       } else {
         ElNotification({
           title: "注册失败",
           message: res.data.msg,
           type: "error",
+          offset: 50,
           duration: 3000,
         })
       }
@@ -149,6 +156,7 @@ const handleSubmit = async () => {
         title: "注册失败",
         message: "请检查网络!",
         type: "error",
+        offset: 50,
         duration: 3000,
       });
     }
@@ -170,6 +178,7 @@ const toggleMode = () => {
   form.username = "";
   form.password = "";
   form.confirmPassword = "";
+  form.phone = "";
 };
 // 自定义校验函数
 const validateForm = () => {
@@ -187,8 +196,6 @@ const validateForm = () => {
       return false;
     }
   }
-
-
 
   // 密码
   if (!form.password) {

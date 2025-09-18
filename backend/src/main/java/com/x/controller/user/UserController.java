@@ -1,8 +1,10 @@
 package com.x.controller.user;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.x.context.BaseContext;
 import com.x.pojo.dto.RegisterDTO;
 import com.x.pojo.dto.UserLoginDTO;
+import com.x.pojo.dto.UserUpdateDTO;
 import com.x.pojo.entity.User;
 import com.x.pojo.vo.UserLoginVO;
 import com.x.properties.JwtProperties;
@@ -48,5 +50,19 @@ public class UserController {
     public  Result<String> register(@RequestBody RegisterDTO registerDTO){
         userService.register(registerDTO);
         return Result.success("注册成功!");
+    }
+
+    @GetMapping("/getUserById")
+    @Operation(summary = "根据id获取用户")
+    public Result<User> getUserById(@RequestParam Integer userId){
+        User user=userService.getUserById(userId);
+        return Result.success(user);
+    }
+    @PostMapping("/updateUser")
+    @Operation(summary = "更新用户信息")
+    public Result<String> updateUser(@RequestBody UserUpdateDTO userUpdateDTO){
+        userUpdateDTO.setUserId(BaseContext.getCurrentId());
+        userService.updateUser(userUpdateDTO);
+        return Result.success();
     }
 }

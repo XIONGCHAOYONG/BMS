@@ -8,5 +8,27 @@
         INSERT INTO user (username, password, phone)
         VALUES (#{username}, #{password}, #{phone})
     </insert>
+    <update id="updateUser" parameterType="com.x.pojo.dto.UserUpdateDTO">
+        UPDATE user
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="realName != null and realName != ''">
+                real_name = #{realName},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="avatar != null and avatar != ''">
+                avatar = #{avatar},
+            </if>
+        </set>
+        WHERE user_id = #{userId}
+    </update>
+
 
 </mapper>

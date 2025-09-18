@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { User } from "@/api/User";
 
 export const useUserStore = defineStore("user", () => {
@@ -12,8 +12,13 @@ export const useUserStore = defineStore("user", () => {
   );
 
   // getters
-  const getToken = () => token.value;
-  const getUser = () => user.value;
+  const getToken = ()=>{
+    return token.value;
+  }
+  const getUser =()=>{
+    return user.value;
+
+  }
 
   // actions
   const setToken = (newToken: string) => {

@@ -28,6 +28,11 @@ const router = createRouter({
       name: 'assistant',
       component: () => import('@/views/Assitant/index.vue'),
     },
+    {
+      path: '/book/:id',
+      name:'book',
+      component: () => import('@/views/Book/index.vue'),
+    }
   ],
 })
 

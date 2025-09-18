@@ -1,3 +1,5 @@
+#密钥文件
+ backend/src/main/resources/application-secret.yml
 # =============================
 # 操作系统生成的文件
 # =============================
@@ -126,3 +128,4 @@ build/
 # 本地配置文件 (根据项目需要决定是否提交)
 # application-local.properties
 # application-dev.properties
+

@@ -5,6 +5,7 @@ import com.x.exception.BusinessException;
 import com.x.mapper.UserMapper;
 import com.x.pojo.dto.RegisterDTO;
 import com.x.pojo.dto.UserLoginDTO;
+import com.x.pojo.dto.UserUpdateDTO;
 import com.x.pojo.entity.User;
 import com.x.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(UserLoginDTO userLoginDTO) {
         User user;
-        // TODO 先判断是手机号还是账号,前端加一个匹配规则，放行两种格式
+        //判断是手机号还是账号登录
         if(userLoginDTO.getIdentifier().matches("^1[3-9]\\d{9}$"))
             user=userMapper.getUserByPhone(userLoginDTO.getIdentifier());
         else if(userLoginDTO.getIdentifier().length()==6)
@@ -52,11 +53,20 @@ public class UserServiceImpl implements UserService {
         //构造新用户对象插入数据库
         User newUser= BeanUtil.copyProperties(registerDTO,User.class);
         newUser.setPassword(bCryptPasswordEncoder.encode(registerDTO.getPassword()));
-        //TODO 借阅时前端提示补充个人信息
         userMapper.insert(newUser);
         //插入后再根据用户id生成账号，防止并发问题
         Long id=newUser.getUserId();
         String account=String.format("%06d", id);
         userMapper.updateAccountById(id,account);
+    }
+
+    @Override
+    public User getUserById(Integer userId) {
+        return userMapper.getUserById(userId);
+    }
+
+    @Override
+    public void updateUser(UserUpdateDTO userUpdateDTO) {
+        userMapper.updateUser(userUpdateDTO);
     }
 }

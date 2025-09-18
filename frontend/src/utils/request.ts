@@ -1,3 +1,4 @@
+import router from '@/router'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 
@@ -35,15 +36,13 @@ request.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           ElMessage.error('未登录')
+          router.push('/login')
           break
         case 403:
-          ElMessage.error('没有权限访问')
           break
         case 404:
-          ElMessage.error('请求的资源不存在')
           break
         case 500:
-          ElMessage.error('服务器内部错误')
           break
         default:
           ElMessage.error(error.response.data?.msg || '请求失败')

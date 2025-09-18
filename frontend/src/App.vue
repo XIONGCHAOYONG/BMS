@@ -25,7 +25,7 @@ const hideNav=computed(() => route.path === '/login')
 /* 路由切换动画 */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.6s ease;
+  transition: opacity 0.3s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
