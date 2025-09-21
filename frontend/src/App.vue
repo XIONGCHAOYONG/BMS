@@ -13,8 +13,7 @@ import { useRoute,useRouter } from 'vue-router'
 import { useUserStore } from './stores/userStore';
 const route = useRoute()
 const router = useRouter()
-const userStore = useUserStore()
-if(!userStore.getUser())
+if(localStorage.getItem('token')==null)
   router.push('/login')
 
 

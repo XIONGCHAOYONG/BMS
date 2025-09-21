@@ -1,6 +1,6 @@
 package com.x.interceptor;
 
-import com.x.context.BaseContext;
+import com.x.common.context.BaseContext;
 import com.x.properties.JwtProperties;
 import com.x.utils.JwtUtil;
 import io.jsonwebtoken.Claims;

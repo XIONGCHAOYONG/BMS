@@ -19,6 +19,8 @@ mybatis:
   type-aliases-package: com.x.pojo
   configuration:
     map-underscore-to-camel-case: true
+  type-handlers-package: com.x.common.handler
+
 
 springdoc:
   api-docs:

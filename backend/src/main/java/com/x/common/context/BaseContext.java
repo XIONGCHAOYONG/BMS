@@ -1,4 +1,4 @@
-package com.x.context;
+package com.x.common.context;
 
 public class BaseContext {
 

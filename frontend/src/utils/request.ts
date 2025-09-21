@@ -1,7 +1,7 @@
 import router from '@/router'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-
+import { useUserStore } from '@/stores/userStore'
 
 //创建axios实例
 const request = axios.create({
@@ -36,6 +36,8 @@ request.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           ElMessage.error('未登录')
+          const userStore = useUserStore()
+          userStore.logout()
           router.push('/login')
           break
         case 403:

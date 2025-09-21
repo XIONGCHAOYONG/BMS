@@ -1,7 +1,6 @@
 package com.x.controller.user;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.x.context.BaseContext;
+import com.x.common.context.BaseContext;
 import com.x.pojo.dto.RegisterDTO;
 import com.x.pojo.dto.UserLoginDTO;
 import com.x.pojo.dto.UserUpdateDTO;

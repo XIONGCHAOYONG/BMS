@@ -1,7 +1,6 @@
-package com.x.exception;
+package com.x.common.exception;
 
 import com.x.utils.Result;
-import com.x.exception.BusinessException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

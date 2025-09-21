@@ -1,7 +1,7 @@
 package com.x.service.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.x.exception.BusinessException;
+import com.x.common.exception.BusinessException;
 import com.x.mapper.UserMapper;
 import com.x.pojo.dto.RegisterDTO;
 import com.x.pojo.dto.UserLoginDTO;
@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.security.auth.login.LoginException;
 
 @Service
 public class UserServiceImpl implements UserService {

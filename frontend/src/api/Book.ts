@@ -7,13 +7,13 @@ export interface Book {
     isbn: string,
     categoryId: number,
     publisher: string,
-    publishDate: string,
+    publishDate: number[],
     totalStock: number,
     availableStock: number,
     summary: string,
     totalLend: number,
     status: number,
-    createTime: string,  
+    createTime: number[],  
 }
 
 export const  getTop10 = () => {

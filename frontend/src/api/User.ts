@@ -11,7 +11,7 @@ export interface User{
     avatar:string,
     role:number,
     status:number,
-    createTime:string,
+    createTime:number[],
 }
 
 

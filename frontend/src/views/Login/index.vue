@@ -70,7 +70,7 @@ const form = reactive({
 });
 
 //登录过前往"/"
-if (userStore.getUser()) {
+if (localStorage.getItem('token') != null) {
   router.push("/");
   ElNotification({
     title: "你想干啥呢?",

@@ -3,6 +3,7 @@ package com.x.mapper;
 import com.x.pojo.entity.Book;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -22,4 +23,19 @@ public interface BookMapper {
             "OR author LIKE CONCAT('%', #{keyword}, '%') " +
             "OR summary LIKE CONCAT('%', #{keyword}, '%')")
     List<Book> searchBooks(String keyword);
+
+    @Update("UPDATE books SET total_lend = total_lend + 1 WHERE book_id = #{bookId}")
+    void increaseTotalLend(Long bookId);
+
+    @Update("UPDATE books SET available_stock = available_stock - 1 WHERE book_id = #{bookId}")
+    void decreaseAvailableStock(Long bookId);
+
+    @Update("UPDATE books SET available_stock = available_stock + 1 WHERE book_id = #{bookId}")
+    void increaseAvailableStock(Long bookId);
+
+    @Update("UPDATE books SET total_stock = total_stock + 1 WHERE book_id = #{bookId}")
+    void increaseTotalStock(Long bookId);
+
+    @Update("UPDATE books SET total_stock = total_stock - 1 WHERE book_id = #{bookId}")
+    void decreaseTotalStock(Long bookId);
 }

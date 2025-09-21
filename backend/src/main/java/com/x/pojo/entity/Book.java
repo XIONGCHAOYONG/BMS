@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Book {
-    private Integer bookId;          // 图书ID
+    private Long bookId;          // 图书ID
     private String title;           // 书名
     private String author;          // 作者
     private String isbn;            // ISBN
