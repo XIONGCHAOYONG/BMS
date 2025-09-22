@@ -79,4 +79,19 @@
         WHERE l.user_id = #{userId} AND l.book_id = #{bookId}
         ORDER BY l.lend_id DESC
     </select>
+
+    <select id="getOverDueIds" resultType="java.lang.Long">
+        SELECT lend_id
+        FROM lend
+        WHERE CURDATE() > due_date
+        <if test="ids != null and ids.size > 0">
+            AND lend_id IN
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+
+
 </mapper>

@@ -29,7 +29,8 @@
                   <p class="book-author">{{ item.author }}</p>
                   <div class="lend-meta">
                     <span>借阅日期:{{ formatDate(item.lend.borrowDate) }}</span>
-                    <span>应还日期:{{ formatDate(item.lend.dueDate) }}</span>
+                    <span>应还日期:
+                      {{ formatDate(item.lend.dueDate) }}</span>
                   </div>
                   <div class="book-status">
                     <el-tag :type="getStatusTypeAndText(item.lend.status)?.type || 'info'" size="small">
@@ -90,8 +91,8 @@
           </template>
           <div class="notification-list">
             <!-- 逾期通知 -->
-            <template v-if="overdueNotices.length > 0">
-              <div v-for="notice in overdueNotices" :key="notice.id" class="notice-item overdue">
+            <template v-if="dueSoonNotices.length > 0">
+              <div v-for="notice in dueSoonNotices" :key="notice.noticeId" class="notice-item overdue">
                 <el-icon color="#f56c6c">
                   <CircleCloseFilled />
                 </el-icon>
@@ -99,14 +100,13 @@
                   <div class="notice-title">
                     《{{ notice.title }}》已逾期 {{ notice.days }} 天
                   </div>
-                  <div class="notice-time">{{ notice.date }}</div>
                 </div>
               </div>
             </template>
 
             <!-- 即将到期通知 -->
-            <template v-if="dueSoonNotices.length > 0">
-              <div v-for="notice in dueSoonNotices" :key="notice.id" class="notice-item due-soon">
+            <template v-if="soonOverdueNotices.length > 0">
+              <div v-for="notice in soonOverdueNotices" :key="notice.noticeId" class="notice-item due-soon">
                 <el-icon color="#e6a23c">
                   <Warning />
                 </el-icon>
@@ -114,13 +114,12 @@
                   <div class="notice-title">
                     《{{ notice.title }}》将在 {{ notice.days }} 天后到期
                   </div>
-                  <div class="notice-time">{{ notice.date }}</div>
                 </div>
               </div>
             </template>
 
             <!-- 无通知时显示 -->
-            <div v-if="overdueNotices.length === 0 && dueSoonNotices.length === 0" class="no-notice">
+            <div v-if="soonOverdueNotices.length === 0 && dueSoonNotices.length === 0" class="no-notice">
               <el-icon>
                 <Reading />
               </el-icon>
@@ -206,49 +205,25 @@ onMounted(async () => {
 })
 
 
-
-
-
-
-
-
-
-
-
-
-
-// 通知数据
-interface Notice {
-  id: number
-  title: string
-  days: number
-  date: string
-}
-
-const overdueNotices = ref<Notice[]>([
-  {
-    id: 1,
-    title: '深入理解计算机系统',
-    days: 3,
-    date: '2025-09-16'
+import type {NotificationVO} from '@/api/Notification'
+import { getAllNotifications } from '@/api/Notification'
+// 通知相关逻辑  
+const notifications= ref<NotificationVO[]>([])
+const soonOverdueNotices= ref<NotificationVO[]>([])
+const dueSoonNotices= ref<NotificationVO[]>([])
+onMounted(async()=>{
+  const res=await getAllNotifications()
+  if(res.data.code===1){
+    notifications.value=res.data.data
+  }else{
+    ElNotification.error({
+      title:'错误',
+      message:res.data.message||'获取通知失败'
+    })
   }
-])
-
-const dueSoonNotices = ref<Notice[]>([
-  {
-    id: 2,
-    title: 'JavaScript高级程序设计',
-    days: 3,
-    date: '2025-09-22'
-  },
-  {
-    id: 3,
-    title: '算法导论',
-    days: 5,
-    date: '2025-09-24'
-  }
-])
-
+    dueSoonNotices.value=res.data.data.filter((item: NotificationVO)=>item.type===2)
+    soonOverdueNotices.value=res.data.data.filter((item: NotificationVO)=>item.type===1)
+})
 
 
 function getBookBgColor(bookId: number): string {

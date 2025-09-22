@@ -1,4 +1,4 @@
-package com.x.pojo.entity;
+package com.x.pojo.vo;
 
 import com.x.common.enumeration.NotificationType;
 import lombok.AllArgsConstructor;
@@ -6,15 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Notification implements Serializable {
+@AllArgsConstructor
+public class NotificationVO implements Serializable {
     private Long noticeId;
-    private Long userId;
-    private Long lendId;
-    private Integer days;  //逾期或者将逾期天数
+    private Integer days;
     private NotificationType type;
+    private String title;
+    private  Long bookId;
 }

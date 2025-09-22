@@ -33,6 +33,8 @@ export interface ReturnDTO {
     lendId: number;
     bookId: number;
 }
+
+
 export const getAllLend = () => {
     return request({
         url: `/user/lend/getAllLend`,
@@ -76,3 +78,4 @@ export const getLendByBookId = (bookId: number) => {
         method: 'GET',
     })
 }
+
