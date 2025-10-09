@@ -4,41 +4,48 @@
 
 <mapper namespace="com.x.mapper.NotificationMapper">
     <update id="resetDays">
-        update notification
-        set days = 1
+        UPDATE notification
+        SET days = DATEDIFF(CURDATE(), due_date)
         <where>
-            <if test="lendIds != null and lendIds.size > 0">
-                lend_id in
-                <foreach collection="lendIds" item="id" open="(" separator="," close=")">
-                    #{id}
+            <if test="lendList != null and lendList.size() > 0">
+                lend_id IN
+                <foreach collection="lendList" item="lend" open="(" separator="," close=")">
+                    #{lend.lendId}
                 </foreach>
             </if>
         </where>
     </update>
 
     <update id="upDays">
-        update notification
-        set days = days + 1
+        UPDATE notification
+        SET days =
+        CASE lend_id
+        <foreach collection="lendList" item="lend">
+            WHEN #{lend.lendId} THEN DATEDIFF(CURDATE(), #{lend.dueDate})
+        </foreach>
+        END
         <where>
-            <if test="lendIds != null and lendIds.size > 0">
-                lend_id in
-                <foreach collection="lendIds" item="id" open="(" separator="," close=")">
-                    #{id}
-                </foreach>
-            </if>
+            lend_id IN
+            <foreach collection="lendList" item="lend" open="(" separator="," close=")">
+                #{lend.lendId}
+            </foreach>
         </where>
     </update>
 
+
     <update id="downDays">
-        update notification
-        set days = days - 1
+        UPDATE notification
+        SET days =
+        CASE lend_id
+        <foreach collection="lendList" item="lend">
+            WHEN #{lend.lendId} THEN DATEDIFF(#{lend.dueDate}, CURDATE())
+        </foreach>
+        END
         <where>
-            <if test="lendIds != null and lendIds.size > 0">
-                lend_id in
-                <foreach collection="lendIds" item="id" open="(" separator="," close=")">
-                    #{id}
-                </foreach>
-            </if>
+            lend_id IN
+            <foreach collection="lendList" item="lend" open="(" separator="," close=")">
+                #{lend.lendId}
+            </foreach>
         </where>
     </update>
 

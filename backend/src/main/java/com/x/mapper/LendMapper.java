@@ -2,6 +2,7 @@ package com.x.mapper;
 
 import com.x.common.enumeration.LendStatus;
 import com.x.pojo.entity.Lend;
+import com.x.pojo.vo.LendTaskVO;
 import com.x.pojo.vo.LendVO;
 import com.x.pojo.vo.TaskVO;
 import org.apache.ibatis.annotations.*;
@@ -30,12 +31,12 @@ public interface LendMapper {
     @Update("update lend set status = #{status} where lend_id= #{lendId}")
     void returnBook(@Param("lendId") Long lendId,@Param("status") LendStatus  status);
 
-    @Select("SELECT lend_id FROM lend where status = #{status}")
-    List<Long> findOldOverdue(@Param("status") LendStatus  status);
+    @Select("SELECT lend_id,due_date FROM lend where status = #{status}")
+    List<LendTaskVO> findOldOverdue(@Param("status") LendStatus  status);
 
-    @Select("SELECT lend_id FROM lend where status = #{status}")
+    @Select("SELECT lend_id,due_date FROM lend where status = #{status}")
 
-    List<Long> findOldSoonOverdue(@Param("status") LendStatus status);
+    List<LendTaskVO> findOldSoonOverdue(@Param("status") LendStatus status);
 
     @Select("SELECT lend_id,user_id " +
             "FROM lend " +
@@ -50,7 +51,7 @@ public interface LendMapper {
     void batchUpdateStatus(List<Long> lendIds, LendStatus status);
 
 
-    List<Long> getOverDueIds(List<Long> ids);
+//    List<Long> getOverDueIds(List<Long> ids);
 
 
 }

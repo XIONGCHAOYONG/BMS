@@ -1,7 +1,7 @@
 <template>
   <div class="chat-container">
     <div class="chat-list" ref="chatList">
-      <div v-for="msg in messages" :key="msg.id" :class="['chat-msg', msg.role]">
+      <div v-for="msg in messages" :key="msg.messageId" :class="['chat-msg', msg.role]">
         <div class="avatar" v-if="msg.role === 'ai'">
           <img src="@/assets/呆唯.png" alt="AI" />
         </div>
@@ -10,39 +10,78 @@
         </div>
         <div class="bubble">
           {{ msg.content }}
+          <span v-if="isLoading && msg === messages[messages.length - 1] && msg.role === 'ai'" class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </span>
         </div>
       </div>
     </div>
     <div class="chat-input-bar">
-      <el-input v-model="input" placeholder="请输入内容..." @keyup.enter="sendMsg" clearable />
-      <el-button type="primary" @click="sendMsg">发送</el-button>
+      <el-input 
+        v-model="input" 
+        placeholder="请输入内容..." 
+        @keyup.enter="sendMsg" 
+        clearable 
+        :disabled="isLoading" 
+      />
+      <el-button 
+        type="primary" 
+        @click="sendMsg" 
+        :loading="isLoading"
+      >
+        {{ isLoading ? '接收中...' : '发送' }}
+      </el-button>
     </div>
   </div>
   <Footer></Footer>
 </template>
 
 <script lang="ts" setup>
-import { ref, nextTick, watch } from 'vue'
+import { ref, nextTick, watch, onMounted } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import Footer from  "@/components/Footer/index.vue"
+import { streamChat, getChatMessage, addChatMessage } from '@/api/ChatMessage'
+import type { ChatMessage } from '@/api/ChatMessage'
 const userStore = useUserStore()
-const user = userStore.getUser() 
-interface Message {
-  id: number
-  role: 'user' | 'ai'
-  content: string
-}
-
-const messages = ref<Message[]>([
-  { id: 1, role: 'ai', content: '你好，我是你的图书馆AI助手，有什么可以帮您？' },
-  { id: 2, role: 'user', content: '帮我推荐几本编程书籍。' },
-  { id: 3, role: 'ai', content: '推荐：《深入理解计算机系统》《JavaScript高级程序设计》《算法导论》' },
-  { id: 4, role: 'user', content: '这些书可以借吗？' },
-  { id: 5, role: 'ai', content: '都可以借阅，您可以在借阅页面查看详情。' }
-])
-
+const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null
+// 使用ChatMessage接口
+const messages = ref<ChatMessage[]>([])
 const input = ref('')
 const chatList = ref<HTMLElement | null>(null)
+const isLoading = ref(false)
+
+// 页面加载时获取历史消息
+onMounted(async () => {
+
+  try {
+    const response = await getChatMessage()
+    if (response.data.data && response.data.data.length > 0) {
+      messages.value = response.data.data
+    } else {
+      // 如果没有历史消息，添加默认欢迎消息
+      messages.value = [{
+        messageId: Date.now(),
+        userId: user?.userId || null,
+        content: '你好，我是你的图书馆AI助手，有什么可以帮您？',
+        role: 'ai',
+        createTime: new Date().toISOString()
+      }]
+    }
+    scrollToBottom()
+  } catch (error) {
+    console.error('获取历史消息失败:', error)
+    // 添加默认欢迎消息
+    messages.value = [{
+      messageId: Date.now(),
+      userId: user?.userId || null,
+      content: '你好，我是你的图书馆AI助手，有什么可以帮您？',
+      role: 'ai',
+      createTime: new Date().toISOString()
+    }]
+  }
+})
 
 function scrollToBottom() {
   nextTick(() => {
@@ -52,24 +91,103 @@ function scrollToBottom() {
   })
 }
 
-function sendMsg() {
-  if (!input.value.trim()) return
-  messages.value.push({
-    id: Date.now(),
+async function sendMsg() {
+  if (!input.value.trim() || isLoading.value) return
+  
+  const userMessage: ChatMessage = {
+    messageId: Date.now(),
+    userId: user?.userId || null,
+    content: input.value,
     role: 'user',
-    content: input.value
-  })
+    createTime: new Date().toISOString()
+  }
+  
+  // 添加用户消息到界面
+  messages.value.push(userMessage)
   scrollToBottom()
-  // 模拟AI回复
-  setTimeout(() => {
-    messages.value.push({
-      id: Date.now() + 1,
-      role: 'ai',
-      content: 'AI已收到您的消息：' + input.value
-    })
-    scrollToBottom()
-  }, 800)
+  
+  // 保存用户消息到数据库
+  try {
+    await addChatMessage(userMessage)
+  } catch (error) {
+    console.error('保存用户消息失败:', error)
+  }
+  
+  const userInput = input.value
   input.value = ''
+  isLoading.value = true
+  
+  // 创建AI回复消息
+  const aiMessageId = Date.now() + 1
+  const aiMessage: ChatMessage = {
+    messageId: aiMessageId,
+    userId: user?.userId || null,
+    content: '',
+    role: 'ai',
+    createTime: new Date().toISOString()
+  }
+  
+  messages.value.push(aiMessage)
+  
+  try {
+    // 调用流式聊天API
+    const response = await streamChat(userInput)
+    
+    if (!response.ok) {
+      throw new Error('网络请求失败')
+    }
+    
+    const reader = response.body?.getReader()
+    if (!reader) {
+      throw new Error('无法读取响应流')
+    }
+    
+    const decoder = new TextDecoder()
+    let done = false
+    
+    while (!done) {
+      const { value, done: readerDone } = await reader.read()
+      done = readerDone
+      
+      if (value) {
+        const text = decoder.decode(value, { stream: !done })
+        // 更新AI回复内容
+        const currentAiMessage = messages.value.find(msg => msg.messageId === aiMessageId)
+        if (currentAiMessage) {
+          currentAiMessage.content += text
+          scrollToBottom()
+        }
+      }
+    }
+    
+    // 流式接收完成后，保存AI回复到数据库
+    const finalAiMessage = messages.value.find(msg => msg.messageId === aiMessageId)
+    if (finalAiMessage && finalAiMessage.content) {
+      try {
+        await addChatMessage(finalAiMessage)
+      } catch (error) {
+        console.error('保存AI回复失败:', error)
+      }
+    }
+    
+  } catch (error) {
+    console.error('聊天请求失败:', error)
+    // 更新错误消息
+    const currentAiMessage = messages.value.find(msg => msg.messageId === aiMessageId)
+    if (currentAiMessage) {
+      currentAiMessage.content = '抱歉，请求失败，请稍后再试。'
+      
+      // 保存错误消息到数据库
+      try {
+        await addChatMessage(currentAiMessage)
+      } catch (saveError) {
+        console.error('保存错误消息失败:', saveError)
+      }
+    }
+  } finally {
+    isLoading.value = false
+    scrollToBottom()
+  }
 }
 
 watch(messages, scrollToBottom)
@@ -105,7 +223,6 @@ watch(messages, scrollToBottom)
 }
 .chat-msg {
   display: flex;
-  align-items: flex-end;
 }
 .chat-msg.user {
   flex-direction: row-reverse;
@@ -138,6 +255,38 @@ watch(messages, scrollToBottom)
   gap: 8px;
   padding: 16px;
   border-top: 1px solid #eee;
+}
+
+.loading-dots {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #999;
+  margin: 0 2px;
+  animation: dot-flashing 1s infinite alternate;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot-flashing {
+  0% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>
 
