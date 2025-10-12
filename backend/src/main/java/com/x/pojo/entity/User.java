@@ -26,4 +26,5 @@ public class User implements Serializable {
     private Byte role;
     private Byte status;
     private LocalDateTime createTime;
+    private Integer points;
 }

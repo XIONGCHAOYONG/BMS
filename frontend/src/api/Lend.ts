@@ -32,6 +32,7 @@ export interface LendVO {
 export interface ReturnDTO {
     lendId: number;
     bookId: number;
+    points: number;
 }
 
 

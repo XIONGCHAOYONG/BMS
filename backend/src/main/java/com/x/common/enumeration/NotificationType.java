@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum NotificationType {
     SOONOVER_DUE((byte) 1),
-    OVERDUE((byte) 2);
+    OVERDUE((byte) 2),
+
+    RETUREND((byte) 3);  //逾期活着将逾期状态改为已还
+
 
     private final byte code;
 

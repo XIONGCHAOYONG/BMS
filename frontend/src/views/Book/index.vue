@@ -140,10 +140,11 @@ import Footer from "@/components/Footer/index.vue"
 import type { LendVO, LendDTO, ReLendDTO, ReturnDTO } from '@/api/Lend';
 import { getLendByBookId, lendBook, renewBook, returnBook } from '@/api/Lend';
 import { useUserStore } from '@/stores/userStore';
+import {getUserById} from '@/api/User'
 const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
-
+const user=JSON.parse(localStorage.getItem('user') || '{}')
 
 //根据分类id获取分类名称、categories初始化
 const categories = ref<Category[]>([])
@@ -351,6 +352,14 @@ const handleLend = async () => {
       })
       return
     }
+    if(user?.points< 0){
+      ElNotification({
+        title: '错误',
+        message: '积分不足',
+        type: 'error'
+      })
+      return
+    }
 
     lendLoading.value = true
 
@@ -547,7 +556,8 @@ const handleReturn = async () => {
 
     const returnDTO: ReturnDTO = {
       lendId: lendHistory.value[0].lend.lendId!,
-      bookId: book.value.bookId
+      bookId: book.value.bookId,
+      points: 0
     }
 
     const res = await returnBook(returnDTO)
@@ -597,7 +607,7 @@ const handleOverdue = async () => {
 
   try {
     await ElMessageBox.confirm(
-      `确认归还《${book.value.title}》吗？\n\n⚠️ 注意：该书已逾期 ${overdueDays} 天，将扣除 ${penaltyPoints} 积分作为逾期费用。`,
+      `确认归还《${book.value.title}》吗？\n\n 注意：该书已逾期 ${overdueDays} 天，将扣除 ${penaltyPoints} 积分作为逾期费用。`,
       '逾期还书确认',
       {
         confirmButtonText: '确认还书',
@@ -609,7 +619,8 @@ const handleOverdue = async () => {
 
     const returnDTO: ReturnDTO = {
       lendId: lendHistory.value[0].lend.lendId!,
-      bookId: book.value.bookId
+      bookId: book.value.bookId,
+      points: penaltyPoints
     }
 
     const res = await returnBook(returnDTO)
@@ -620,18 +631,23 @@ const handleOverdue = async () => {
         message: `还书成功，已扣除 ${penaltyPoints} 积分`,
         type: 'success'
       })
-      
-      // 更新用户积分（模拟）
-      const currentUser = userStore.getUser()
-      if (currentUser) {
-        // 这里应该调用更新用户积分的API，暂时模拟
-        ElNotification({
-          title: '积分扣除',
-          message: `因逾期还书，已从您的账户扣除 ${penaltyPoints} 积分`,
-          type: 'warning',
-          duration: 5000
-        })
+      //更新用户
+      const res=await getUserById(user.userId)
+      if(res.data.code===1){
+        userStore.setUser(res.data.data)
       }
+      
+      // // 更新用户积分（模拟）
+      // const currentUser = userStore.getUser()
+      // if (currentUser) {
+      //   // 这里应该调用更新用户积分的API，暂时模拟
+      //   ElNotification({
+      //     title: '积分扣除',
+      //     message: `因逾期还书，已从您的账户扣除 ${penaltyPoints} 积分`,
+      //     type: 'warning',
+      //     duration: 5000
+      //   })
+      // }
       
       // 刷新借阅历史和书籍信息
       await loadLendHistory()

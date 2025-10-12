@@ -21,4 +21,10 @@ public interface UserMapper {
     User getUserById(Integer userId);
 
     void updateUser(UserUpdateDTO userUpdateDTO);
+
+    @Update("update user set points = points- #{points} where user_id = #{userId}")
+    void subPoints(Long userId, Integer points);
+
+    @Update("update user set points = 100 ")
+    void recoverPoints();
 }

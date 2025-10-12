@@ -12,6 +12,7 @@ export interface User{
     role:number,
     status:number,
     createTime:number[],
+    points:number,
 }
 
 

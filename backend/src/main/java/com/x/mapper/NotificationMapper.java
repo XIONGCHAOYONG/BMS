@@ -29,4 +29,7 @@ public interface NotificationMapper {
     void  updateType(List<Long> lendIds, NotificationType type);
 
     void  batchInsert(List<Notification> notifications);
+
+    @Update("update notification SET type = #{notificationType} WHERE lend_id = #{lendId} and user_id = #{userId}")
+    void updateStatus(Long userId,Long lendId,NotificationType notificationType);
 }

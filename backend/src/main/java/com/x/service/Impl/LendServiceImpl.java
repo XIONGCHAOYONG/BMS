@@ -3,8 +3,11 @@ package com.x.service.Impl;
 
 import com.x.common.context.BaseContext;
 import com.x.common.enumeration.LendStatus;
+import com.x.common.enumeration.NotificationType;
 import com.x.mapper.BookMapper;
 import com.x.mapper.LendMapper;
+import com.x.mapper.NotificationMapper;
+import com.x.mapper.UserMapper;
 import com.x.pojo.dto.LendDTO;
 import com.x.pojo.dto.ReLendDTO;
 import com.x.pojo.dto.ReturnDTO;
@@ -23,6 +26,10 @@ public class LendServiceImpl implements LendService {
     private LendMapper lendMapper;
     @Autowired
     private BookMapper bookMapper;
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private NotificationMapper notificationMapper;
     @Override
     public List<LendVO> getAllLend() {
         return lendMapper.getAllLend(BaseContext.getCurrentId());
@@ -63,6 +70,14 @@ public class LendServiceImpl implements LendService {
         // 更新库存
         bookMapper.increaseAvailableStock(returnDTO.getBookId());
         lendMapper.returnBook(returnDTO.getLendId(),LendStatus.RETURNED);
+        //积分扣除
+        if(returnDTO.getPoints()!=null && returnDTO.getPoints()>0) {
+            userMapper.subPoints(BaseContext.getCurrentId(),returnDTO.getPoints());
+        }
+        //nnotification更改状态
+        notificationMapper.updateStatus(BaseContext.getCurrentId(),returnDTO.getLendId(), NotificationType.RETUREND);
+
+
     }
 
     @Override

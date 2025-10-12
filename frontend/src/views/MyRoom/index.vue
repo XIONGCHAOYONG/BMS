@@ -18,6 +18,9 @@
       <el-descriptions-item label="手机">
         {{ user?.phone || '请及时补充联系方式' }}
       </el-descriptions-item>
+      <el-descriptions-item label="积分">
+        {{ user?.points  }}
+      </el-descriptions-item>
       <el-descriptions-item label="地址">
         {{ user?.address || '请及时补充联系地址' }}
       </el-descriptions-item>

@@ -4,6 +4,7 @@ import com.x.common.enumeration.NotificationType;
 import com.x.mapper.LendMapper;
 import com.x.common.enumeration.LendStatus;
 import com.x.mapper.NotificationMapper;
+import com.x.mapper.UserMapper;
 import com.x.pojo.entity.Notification;
 import com.x.pojo.vo.LendTaskVO;
 import com.x.pojo.vo.TaskVO;
@@ -28,12 +29,20 @@ public class dueCheckTask {
     @Autowired
     private NotificationMapper notificationMapper;
 
+    @Autowired
+    private UserMapper userMapper;
+
 //TODO 执行日志
 
     @Scheduled(cron = "0 0 0 * * ?")  //每天凌晨0点执行
     //定时任务，每天凌晨自动执行
     public void autoDoTask() {
         doNotificationAndLend();
+    }
+
+    @Scheduled(cron = "0 0 0 1 * ?")  //每个月自动恢复积分
+    public void recoverPoints(){
+        userMapper.recoverPoints();
     }
 
     //每次启动后自动执行一遍

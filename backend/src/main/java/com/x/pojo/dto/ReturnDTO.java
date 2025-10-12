@@ -12,4 +12,5 @@ import java.io.Serializable;
 public class ReturnDTO implements Serializable {
     private Long lendId;
     private Long bookId;
+    private Integer points;
 }
