@@ -25,7 +25,7 @@
         {{ user?.address || '请及时补充联系地址' }}
       </el-descriptions-item>
       <el-descriptions-item label="注册时间">
-        {{ user?.createTime || '未知' }}
+        {{ formatDate(user?.createTime as number[]) || '未知' }}
       </el-descriptions-item>
       <el-descriptions-item label="状态">
         <el-tag :type="user?.status === 0 ? 'success' : 'danger'">
@@ -262,6 +262,17 @@ watch(showEditDialog, (newVal) => {
     initEditForm();
   }
 });
+
+function formatDate(timeArr?: number[]): string {
+  if (!Array.isArray(timeArr) || timeArr.length < 6) {
+    return "";
+  }
+  const [y, m, d, h, mi, s] = timeArr;
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${y}-${pad(m)}-${pad(d)} ${pad(h)}:${pad(mi)}:${pad(s)}`;
+}
+
+
 
 onMounted(() => {
   if (userStore.user) {

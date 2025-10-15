@@ -38,4 +38,7 @@ public interface BookMapper {
 
     @Update("UPDATE books SET total_stock = total_stock - 1 WHERE book_id = #{bookId}")
     void decreaseTotalStock(Long bookId);
+
+    @Select("SELECT count(*) FROM books")
+   Long  getCount ();
 }

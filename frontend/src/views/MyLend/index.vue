@@ -8,7 +8,13 @@
 
 
         <div class="timeline-items">
-          <div v-for="(item, index) in lendHistory" :key="item.lend.lendId" class="timeline-item"
+          <div v-if="lendHistory.length===0" class="nohistory">
+              <el-icon>
+                <Van />
+              </el-icon>
+              <span>暂无借阅</span>
+            </div>
+          <div v-else v-for="(item, index) in lendHistory" :key="item.lend.lendId" class="timeline-item"
             :class="{ 'left': index % 2 === 0, 'right': index % 2 === 1 }"
             @click="$router.push(`/book/${item.lend.bookId}`)"
             >
@@ -135,7 +141,13 @@
   <!-- 当前借阅 -->
   <div class="curLend">
     <h3 class="curLendH3">当前借阅</h3>
-    <div class="current-lending-list">
+    <div v-if="activeLendBooks.length === 0 && dueSoonNotices.length === 0" class="nocur">
+              <el-icon>
+                <Place />
+              </el-icon>
+              <span>暂无借阅</span>
+            </div>
+    <div v-else class="current-lending-list">
       <div v-for="item in activeLendBooks" :key="item.lend.lendId" class="current-lending-item"
                   @click="$router.push(`/book/${item.lend.bookId}`)"
 >
@@ -170,7 +182,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
-import { Reading, Warning, CircleCloseFilled } from '@element-plus/icons-vue'
+import { Reading, Warning, CircleCloseFilled, Van } from '@element-plus/icons-vue'
 import { ElMessage, ElNotification } from 'element-plus'
 import dayjs from 'dayjs'
 import Footer from '@/components/Footer/index.vue'
@@ -689,5 +701,22 @@ function remainingDays(dueDate: [number, number, number]): number {
 
 .no-notice .el-icon {
   font-size: 24px;
+}
+
+.nohistory{
+  position: absolute;
+  align-items: center;
+  top: 100px;
+  left: 360px;
+  color: #909399;
+  font-size: 40px;
+}
+.nocur{
+  position: absolute;
+  align-items: center;
+  top: 80px;
+  left: 660px;
+  color: #909399;
+  font-size: 40px;
 }
 </style>

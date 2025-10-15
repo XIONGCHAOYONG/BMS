@@ -15,14 +15,13 @@ import static dev.langchain4j.service.spring.AiServiceWiringMode.EXPLICIT;
         streamingChatModel = "qwenStreamingChatModel",
         chatMemory = "chatMemory",
         chatMemoryProvider = "chatMemoryProvider",
-        tools = {"calculatorTools", "articleTools"},
+        tools = {"calculatorTools"},
         contentRetriever = "contentRetriever"
 )
 public interface Assistant {
 
     @SystemMessage("""
-        你是一个专业的助手，请根据提供的上下文信息回答问题。
-         
+        你是一个图书管理系统的ai助手，你需要回答读者的问题。
         请遵循以下格式要求：
         - 使用清晰的段落结构
         - 重要的概念可以**加粗**显示

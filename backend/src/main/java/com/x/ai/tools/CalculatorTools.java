@@ -1,13 +1,16 @@
 package com.x.ai.tools;
 
+import com.x.mapper.BookMapper;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.agent.tool.ToolMemoryId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 
 public class CalculatorTools {
+
 
     @Tool(name = "加法", value = "返回两个参数相加之和")
     double sum(
@@ -22,5 +25,13 @@ public class CalculatorTools {
             @ToolMemoryId Long memoryId, double x) {
 
         return Math.sqrt(x);
+    }
+
+    @Autowired
+    private BookMapper bookMapper;
+    @Tool(name="查询图书馆中的总藏书数量", value = "返回图书馆中的总藏书数量")
+    Long getCounts(
+            @ToolMemoryId Long memoryId) {
+        return bookMapper.getCount();
     }
 }

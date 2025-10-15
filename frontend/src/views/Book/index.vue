@@ -111,7 +111,7 @@
         <span>{{ book?.title }}</span>
       </el-form-item>
       <el-form-item label="借阅天数" prop="days">
-        <el-input-number v-model="lendForm.days" :min="1" :max="60" :step="1" />
+        <el-input-number v-model="lendForm.days" :min="7" :max="60" :step="1" />
         <span class="days-hint">最长可借60天</span>
       </el-form-item>
     </el-form>
@@ -321,13 +321,30 @@ const lendFormRef = ref()
 // 借阅表单验证规则
 const lendRules = {
   days: [
-    { required: true, message: '请选择借阅天数', trigger: 'change' },
-    { type: 'number', min: 1, max: 60, message: '借阅天数必须在1-60天之间', trigger: 'change' }
-  ]
-}
+    { required: true, message: "请输入借阅天数", trigger: "blur" },
+    {
+      validator: (rule: any, value: number, callback: any) => {
+        if (value < 7 || value > 60) {
+          callback(new Error("借阅天数必须在7-60天之间"));
+        } else {
+          callback();
+        }
+      },
+      trigger: "change",
+    },
+  ],
+};
 
 // 处理借阅
 const handleLend = async () => {
+   if(lendForm.value.days < 7 || lendForm.value.days > 60){
+      ElNotification({
+        title: '错误',
+        message: '借阅天数必须在7-60天之间',
+        type: 'error'
+      })
+      return
+    }
   if (!lendFormRef.value) return
 
   try {
@@ -352,14 +369,7 @@ const handleLend = async () => {
       })
       return
     }
-    if(user?.points< 0){
-      ElNotification({
-        title: '错误',
-        message: '积分不足',
-        type: 'error'
-      })
-      return
-    }
+   
 
     lendLoading.value = true
 
@@ -636,6 +646,8 @@ const handleOverdue = async () => {
       if(res.data.code===1){
         userStore.setUser(res.data.data)
       }
+      //将逾期信息改成已还
+      
       
       // // 更新用户积分（模拟）
       // const currentUser = userStore.getUser()
