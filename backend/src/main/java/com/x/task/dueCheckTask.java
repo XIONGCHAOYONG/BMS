@@ -35,8 +35,13 @@ public class dueCheckTask {
 //TODO 执行日志
 
     @Scheduled(cron = "0 0 0 * * ?")  //每天凌晨0点执行
-    //定时任务，每天凌晨自动执行
+    //定时任务，每天凌晨自动执行,用于更新数据借阅状态和通知信息
     public void autoDoTask() {
+        doNotificationAndLend();
+    }
+    //每次启动后自动执行一遍
+    @EventListener(ApplicationReadyEvent.class)
+    public void startDoTask(){
         doNotificationAndLend();
     }
 
@@ -45,11 +50,7 @@ public class dueCheckTask {
         userMapper.recoverPoints();
     }
 
-    //每次启动后自动执行一遍
-    @EventListener(ApplicationReadyEvent.class)
-    public void startDoTask(){
-        doNotificationAndLend();
-    }
+
 
 
 

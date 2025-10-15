@@ -5,7 +5,7 @@
 <mapper namespace="com.x.mapper.NotificationMapper">
     <update id="resetDays">
         UPDATE notification
-        SET days = DATEDIFF(CURDATE(), due_date)
+        SET days = 1
         <where>
             <if test="lendList != null and lendList.size() > 0">
                 lend_id IN

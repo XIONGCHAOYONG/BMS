@@ -262,12 +262,12 @@ function getStatusTypeAndText(status: number) {
       };
     case 2:
       return {
-        type: 'warning',
+        type: 'danger',
         text: '逾期'
       };
     case 3:
       return {
-        type: 'danger',
+        type: 'warning',
         text: '将逾期'
       };
     case 4:

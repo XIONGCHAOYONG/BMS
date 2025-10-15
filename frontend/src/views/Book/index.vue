@@ -337,6 +337,7 @@ const lendRules = {
 
 // 处理借阅
 const handleLend = async () => {
+  
    if(lendForm.value.days < 7 || lendForm.value.days > 60){
       ElNotification({
         title: '错误',
@@ -402,7 +403,7 @@ const handleLend = async () => {
     } else {
       ElNotification({
         title: '错误',
-        message: '借阅失败: ' + res.data.message,
+        message: '借阅失败: ' + res.data.msg,
         type: 'error'
       })
     }
@@ -437,12 +438,12 @@ function getStatusTypeAndText(status: number) {
       };
     case 2:
       return {
-        type: 'warning',
+        type: 'danger',
         text: '逾期'
       };
     case 3:
       return {
-        type: 'danger',
+        type: 'warning',
         text: '将逾期'
       };
     case 4:

@@ -53,7 +53,7 @@ public class UserController {
 
     @GetMapping("/getUserById")
     @Operation(summary = "根据id获取用户")
-    public Result<User> getUserById(@RequestParam Integer userId){
+    public Result<User> getUserById(@RequestParam Long userId){
         User user=userService.getUserById(userId);
         return Result.success(user);
     }

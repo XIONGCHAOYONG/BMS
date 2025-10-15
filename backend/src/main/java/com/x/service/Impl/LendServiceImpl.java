@@ -4,6 +4,7 @@ package com.x.service.Impl;
 import com.x.common.context.BaseContext;
 import com.x.common.enumeration.LendStatus;
 import com.x.common.enumeration.NotificationType;
+import com.x.common.exception.BusinessException;
 import com.x.mapper.BookMapper;
 import com.x.mapper.LendMapper;
 import com.x.mapper.NotificationMapper;
@@ -12,6 +13,7 @@ import com.x.pojo.dto.LendDTO;
 import com.x.pojo.dto.ReLendDTO;
 import com.x.pojo.dto.ReturnDTO;
 import com.x.pojo.entity.Lend;
+import com.x.pojo.entity.User;
 import com.x.pojo.vo.LendVO;
 import com.x.service.LendService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,10 @@ public class LendServiceImpl implements LendService {
     @Override
     @Transactional
     public void lendBook(LendDTO lendDTO) {
+        User user = userMapper.getUserById(BaseContext.getCurrentId());
+        if(user.getPoints()<=0) {
+            throw new BusinessException("积分不足!");
+        }
         Lend lend = new Lend();
         lend.setUserId(BaseContext.getCurrentId());
         lend.setBookId(lendDTO.getBookId());

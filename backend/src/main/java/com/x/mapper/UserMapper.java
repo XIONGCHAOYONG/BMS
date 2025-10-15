@@ -18,7 +18,7 @@ public interface UserMapper {
     void updateAccountById(Long userId, String account);
 
     @Select("select * from user where user_id = #{userId}")
-    User getUserById(Integer userId);
+    User getUserById(Long userId);
 
     void updateUser(UserUpdateDTO userUpdateDTO);
 
