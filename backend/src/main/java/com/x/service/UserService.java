@@ -13,4 +13,8 @@ public interface UserService {
     User getUserById(Long userId);
 
     void updateUser(UserUpdateDTO userUpdateDTO);
+
+    void  sendCode(String phone);
+
+    User codeLogin(String phone, String code);
 }

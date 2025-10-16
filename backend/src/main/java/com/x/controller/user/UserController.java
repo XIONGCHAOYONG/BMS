@@ -51,6 +51,28 @@ public class UserController {
         return Result.success("注册成功!");
     }
 
+    @GetMapping("/sendCode/{phone}")
+    @Operation(summary = "发送验证码")
+    public Result<String> sendCode(@PathVariable String phone){
+        userService.sendCode(phone);
+        return Result.success();
+    }
+
+    @GetMapping("/codeLogin/{phone}/{code}")
+    @Operation(summary = "手机验证码登录")
+    public Result<UserLoginVO> codeLogin(@PathVariable String phone,@PathVariable String code){
+         User user= userService.codeLogin(phone,code);
+        //生成jwt令牌
+        Map<String,Object> claims=new HashMap<>();
+        claims.put("userId",user.getUserId());
+        String token= JwtUtil.createJWT(
+                jwtProperties.getSecretKey(),
+                jwtProperties.getTtl(),
+                claims);
+        //给返回对象VO赋值
+        UserLoginVO res= new UserLoginVO(user,token);
+        return Result.success(res);
+    }
     @GetMapping("/getUserById")
     @Operation(summary = "根据id获取用户")
     public Result<User> getUserById(@RequestParam Long userId){

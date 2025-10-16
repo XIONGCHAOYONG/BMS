@@ -70,3 +70,17 @@ export const updateUser=(UserUpdateDTO:UserUpdateDTO)=>{
     data: UserUpdateDTO
   })
 }
+
+export const sendCode=(phone:string)=>{
+    return request({
+    url: `/user/user/sendCode/${phone}`,
+    method: 'GET'
+    })
+}
+
+export const codeLogin=(phone:string,code:string)=>{
+    return request({
+    url: `/user/user/codeLogin/${phone}/${code}`,
+    method: 'GET'
+    })
+}

@@ -8,12 +8,15 @@ import com.x.pojo.dto.UserLoginDTO;
 import com.x.pojo.dto.UserUpdateDTO;
 import com.x.pojo.entity.User;
 import com.x.service.UserService;
+import com.x.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+
+
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
@@ -66,5 +69,41 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(UserUpdateDTO userUpdateDTO) {
         userMapper.updateUser(userUpdateDTO);
+    }
+
+    @Override
+    public void sendCode(String phone) {
+        //生成六位数验证码,模拟短信登录
+        String code=String.format("%06d", (int)(Math.random()*1000000));
+        //将验证码存入redis，并且设置过期时间
+        RedisUtil.set(phone,code,60);
+        System.out.println("验证码:"+code);
+    }
+
+    @Override
+    public User codeLogin(String phone, String code) {
+
+        //到redis中查找手机号对应的验证码
+        String redisCode=RedisUtil.get(phone);
+        //未找到
+        if (redisCode==null){
+            throw new BusinessException("验证码不存在或已过期，请重试!");
+        }
+        //找到
+        if(redisCode.equals(code)){
+            //先判断手机号是否已注册
+            User user=userMapper.getUserByPhone(phone);
+            if(user==null){
+                //未注册，则注册,默认密码123,用户名user_ phone
+                RegisterDTO registerDTO=new RegisterDTO(phone,"123","user_"+ phone);
+                register(registerDTO);
+                user=userMapper.getUserByPhone(phone);
+            }
+            return  user;
+        }
+        else{
+            throw new BusinessException("验证码错误!");
+        }
+
     }
 }

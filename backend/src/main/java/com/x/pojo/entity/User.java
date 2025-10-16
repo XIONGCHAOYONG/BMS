@@ -24,7 +24,7 @@ public class User implements Serializable {
     private String address;
     private String avatar;
     private Byte role;
-    private Byte status;
+    private Byte status;  //0 正常 1 禁用
     private LocalDateTime createTime;
     private Integer points;
 }
